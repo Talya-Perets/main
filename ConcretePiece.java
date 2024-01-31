@@ -26,8 +26,8 @@ public abstract class ConcretePiece implements Piece{
     public void addPos(Position position){
         if(positions.size()==0){this.positions.add(position);}
       else {
-           Position lastPos = positions.getLast();
-           checkDistance(lastPos,position);
+          Position lastPos = positions.get(positions.size() - 1);
+          checkDistance(lastPos,position);
             this.positions.add(position);
         }
 
