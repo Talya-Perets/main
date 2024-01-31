@@ -6,11 +6,11 @@ public class GameLogic implements  PlayableLogic{
     private  ConcretePlayer winner;
     private boolean isFirstPlayerTurn;
     private ConcretePiece[][] board;
-    private int boardSize=11;
+    final int boardSize=11;
     private  boolean isGameFinished=false;
     private Position kingPos;
-    private ArrayList<Pawn> pawns = new ArrayList<Pawn>();
-    private ArrayList<ConcretePiece> pieces = new ArrayList<ConcretePiece>();
+    private ArrayList<Pawn> pawns = new ArrayList<>();
+    private ArrayList<ConcretePiece> pieces = new ArrayList<>();
     private int[][] amountPieceAtPosition = new int[boardSize][boardSize];
     KillsCompare killsCompare = new KillsCompare();
     //distance comparator
@@ -103,7 +103,7 @@ public class GameLogic implements  PlayableLogic{
 
         }
 
-    };
+    }
     @Override
     public boolean move(Position a, Position b) {
         ConcretePiece piece = getPieceAtPosition(a);
@@ -120,7 +120,7 @@ public class GameLogic implements  PlayableLogic{
             this.reset();
             isGameFinished=true;
         }
-       
+
         //Clears the board where the piece was and moves him to the new location
         board[a.getX()][a.getY()]= null;
         board[b.getX()][b.getY()]=piece;
@@ -147,15 +147,15 @@ public class GameLogic implements  PlayableLogic{
             this.kingPos = new Position(b.getX(),b.getY());
 
         }
-       
+
         //Update the second player's turn
         this.isFirstPlayerTurn = !this.isFirstPlayerTurn;
 
         return true;
 
     }
-  
-//    A function that uses the variable kingpos that always updates the position of the king
+
+    //    A function that uses the variable kingpos that always updates the position of the king
 //    and checks whether the king is surrounded by players of the other team
     public boolean isKingSurrounded(int x, int y){
         //check the four adjacent position around the king
@@ -182,7 +182,7 @@ public class GameLogic implements  PlayableLogic{
         if(isCorner(b)&& !(piece instanceof King)) return false;
         return true;
     }
-//   A function that checks whether two players belong to the same group or not
+    //   A function that checks whether two players belong to the same group or not
     private boolean isCorner(Position position){
         int x = position.getX();
         int y = position.getY();
@@ -225,7 +225,7 @@ public class GameLogic implements  PlayableLogic{
 
     }
 
-//    The funckey finally checks if it is possible to eat and eats as much as possible.
+    //    The funckey finally checks if it is possible to eat and eats as much as possible.
 //Checking if the player on the other side is from the other team or is it off the board.
 //And making sure it's not a king
     public boolean PossibleToEat(int x , int y, int derX,int derY,ConcretePiece piece){
@@ -242,13 +242,13 @@ public class GameLogic implements  PlayableLogic{
         }
         if (!haveDifferentOwners(getPieceAtPosition(nextPosition),piece)&&board[nextPosition.getX()][nextPosition.getY()]!=null) {
             if(!(getPieceAtPosition(nextPosition)instanceof King)){
-               piece.addKill();
+                piece.addKill();
                 return true;}
         }
 
         return false;
     };
-//    check if the position is in the bord
+    //    check if the position is in the bord
     public boolean inBoard(Position position ){
         if(position.getX()<0||position.getX()>boardSize-1||position.getY()<0||position.getY()>boardSize-1){
             return false;}
@@ -265,7 +265,7 @@ public class GameLogic implements  PlayableLogic{
         }
         return false;
     }
-//A function that checks whether two players belong to the same group or not
+    //A function that checks whether two players belong to the same group or not
     public boolean haveDifferentOwners(ConcretePiece piece1, ConcretePiece piece2) {
         if (piece1 == null || piece2 == null) {
             return false; // Assuming null means no piece is present
@@ -276,7 +276,7 @@ public class GameLogic implements  PlayableLogic{
     public void eatPiece(int x ,int y){
         board[x][y]=null;
     }
-     //A function that is called at the end of the game and sends to all functions that print
+    //A function that is called at the end of the game and sends to all functions that print
     public void printAll(){
         this.printHistorySteps();
         this.printStarts();
@@ -289,7 +289,7 @@ public class GameLogic implements  PlayableLogic{
 
     }
 
-     public void printStarts(){
+    public void printStarts(){
         System.out.println("***************************************************************************");
     }
 
@@ -301,7 +301,7 @@ public class GameLogic implements  PlayableLogic{
         for(ConcretePiece piece: this.pieces
         ){
             if(piece.getPositions().size()>1) {
-                String result = "" + piece.getId() + ": [";
+                String result = piece.getId() + ": [";
                 for (int i = 0; i < piece.getPositions().size(); i++) {
                     Position pos = piece.getPositions().get(i);
                     result += pos.toString();
@@ -354,7 +354,7 @@ public class GameLogic implements  PlayableLogic{
         positionArray.sort(positionFinishComp);
         for (Position pos:positionArray){
             if(amountPieceAtPosition[pos.getX()][pos.getY()]>1){
-                System.out.println(pos.toString() +""+amountPieceAtPosition[pos.getX()][pos.getY()]+" pieces");
+                System.out.println(pos.toString() +amountPieceAtPosition[pos.getX()][pos.getY()]+" pieces");
             }
         }
 
@@ -382,7 +382,7 @@ public class GameLogic implements  PlayableLogic{
     @Override
     public boolean isGameFinished() {
         return  isGameFinished;
-   }
+    }
 
     @Override
     public boolean isSecondPlayerTurn() {
