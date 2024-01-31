@@ -5,9 +5,14 @@ public abstract class ConcretePiece implements Piece{
     private ConcretePlayer owner;
     private Position position;
     private String id;
+
+    //Saves every position that pice through every game
     private ArrayList<Position> positions=new ArrayList<Position>();
+
+    //A reserved variable for calculating the distance each piece has traveled
     private int distance =0;
 
+    //constructor
     public ConcretePiece(String type , ConcretePlayer owner , Position position,String id){
         this.type=type;
         this.owner =owner;
@@ -23,6 +28,7 @@ public abstract class ConcretePiece implements Piece{
     public String getId() {
         return id;
     }
+    //Adds a position to the ArryList if it's empty then only inserts if it's not empty then completes and sends to the function that calculates the distance
     public void addPos(Position position){
         if(positions.size()==0){this.positions.add(position);}
       else {
@@ -35,11 +41,15 @@ public abstract class ConcretePiece implements Piece{
     public ArrayList<Position> getPositions(){
         return this.positions;
     }
+   
+    
+    //The function receives a String which is the id and outputs only the number. It will be useful in comparisons
     public int getIdNum(){
         String onlyNum = this.id.replaceAll("[^0-9]","");
         return Integer.parseInt(onlyNum);
     }
 
+//The function receives two positions, calculates the distance and adds the distance to the already accumulated distance    
     public void checkDistance(Position lastPos , Position newPos)
     {
         if(lastPos.getX()==newPos.getX()){
