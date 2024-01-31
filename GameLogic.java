@@ -4,15 +4,13 @@ public class GameLogic implements  PlayableLogic{
     private  ConcretePlayer firstPlayer;
     private  ConcretePlayer secondPlayer;
     private  ConcretePlayer winner;
-    private  ConcretePlayer loser;
     private boolean isFirstPlayerTurn;
     private ConcretePiece[][] board;
     private int boardSize=11;
     private  boolean isGameFinished=false;
     private Position kingPos;
     private ArrayList<Pawn> pawns = new ArrayList<Pawn>();
-    private ArrayList<ConcretePiece> pieces
-            = new ArrayList<ConcretePiece>();
+    private ArrayList<ConcretePiece> pieces = new ArrayList<ConcretePiece>();
     private int[][] amountPieceAtPosition = new int[boardSize][boardSize];
     KillsCompare killsCompare = new KillsCompare();
     //distance comparator
@@ -50,6 +48,9 @@ public class GameLogic implements  PlayableLogic{
         this.isGameFinished=false;
         this.isFirstPlayerTurn=true;
         this.board = new ConcretePiece[boardSize][boardSize];
+        this.pawns=new ArrayList<>();
+        this.pieces=new ArrayList<>();
+        this.amountPieceAtPosition=new int[boardSize][boardSize];
         initBoard();
     }
     private void initBoard(){
@@ -116,10 +117,9 @@ public class GameLogic implements  PlayableLogic{
             this.isGameFinished=true;
             this.secondPlayer.incWin();
             this.winner=secondPlayer;
-            this.loser= firstPlayer;
             this.printAll();
             this.reset();
-            return true;
+            isGameFinished=true;
         }
 
         board[a.getX()][a.getY()]= null;
@@ -133,10 +133,9 @@ public class GameLogic implements  PlayableLogic{
             this.isGameFinished=true;
             this.secondPlayer.incWin();
             this.winner=firstPlayer;
-            this.loser=secondPlayer;
             printAll();
             this.reset();
-            return true;
+            isGameFinished=true;
         }
         if(!(piece.getType()=="♔")) {
             checkAround(b, piece);
@@ -374,9 +373,8 @@ public class GameLogic implements  PlayableLogic{
 
     @Override
     public boolean isGameFinished() {
-
-        return this.isGameFinished();
-    }
+        return  isGameFinished;
+   }
 
     @Override
     public boolean isSecondPlayerTurn() {
