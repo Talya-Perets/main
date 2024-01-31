@@ -68,8 +68,7 @@ public class GameLogic implements  PlayableLogic{
             Pawn pawn = new Pawn("♟",firstPlayer ,new Position(row,col),"A"+attackId);
             board[row][col]=pawn;
             pawns.add(pawn);
-            pieces
-                    .add(pawn);
+            pieces.add(pawn);
             amountPieceAtPosition[row][col]++;
             attackId++;
         }
@@ -87,8 +86,7 @@ public class GameLogic implements  PlayableLogic{
                 this.kingPos = new Position(5,5);
                 board[5][5]=king;
                 amountPieceAtPosition[row][col]++;
-                pieces
-                        .add(king);
+                pieces.add(king);
                 defenseId++;
             }else{
                 //place a pawn in all position needed
@@ -113,6 +111,7 @@ public class GameLogic implements  PlayableLogic{
         if (piece == null || !isValidMove(piece, a, b) || !isPathClear(a, b)) {
             return false;
         }
+        //If the king in the corner informs that the game is over and performs the actions required to perform that the game is over
         if (piece.getType()=="♔" &&isCorner(b)){
             this.isGameFinished=true;
             this.secondPlayer.incWin();
@@ -121,14 +120,18 @@ public class GameLogic implements  PlayableLogic{
             this.reset();
             isGameFinished=true;
         }
-
+       
+        //Clears the board where the piece was and moves him to the new location
         board[a.getX()][a.getY()]= null;
         board[b.getX()][b.getY()]=piece;
         if(isPieceFirstTime(piece,b)){
             amountPieceAtPosition[b.getX()][b.getY()]++;
         };
+
+        //Adds the position to the piece's arrayList
         piece.addPos(b);
 
+        //If the king is surrounded, he informs that the game is over and what is relevant to victory
         if(isKingSurrounded(kingPos.getX(),kingPos.getY())){
             this.isGameFinished=true;
             this.secondPlayer.incWin();
@@ -137,97 +140,21 @@ public class GameLogic implements  PlayableLogic{
             this.reset();
             isGameFinished=true;
         }
+        //If it's not a king, it sends to a function that checks whether it can be eaten
         if(!(piece.getType()=="♔")) {
             checkAround(b, piece);
         }else{
             this.kingPos = new Position(b.getX(),b.getY());
 
         }
-
+       
+        //Update the second player's turn
         this.isFirstPlayerTurn = !this.isFirstPlayerTurn;
 
         return true;
 
     }
-    public void printAll(){
-        this.printHistorySteps();
-        this.printStarts();
-        this.printKills();
-        this.printStarts();
-        this.printDistance();
-        this.printStarts();
-        this.printPieceCount();
-        this.printStarts();
-
-    }
-    public void printHistorySteps(){
-        StepsAmountComp stepComp = new StepsAmountComp();
-        Comparator<ConcretePiece> historyComp = winnComp.thenComparing(stepComp);
-        pieces
-                .sort(historyComp);
-        for(ConcretePiece piece: this.pieces
-        ){
-            if(piece.getPositions().size()>1) {
-                String result = "" + piece.getId() + ": [";
-                for (int i = 0; i < piece.getPositions().size(); i++) {
-                    Position pos = piece.getPositions().get(i);
-                    result += pos.toString();
-                    if (i < piece.getPositions().size() - 1) {
-                        result += ", ";
-                    }
-                }
-                result += "]";
-                System.out.println(result);
-            }
-        }
-    }
-
-    public void printDistance(){
-        IdComp idComp = new IdComp();
-        DistanceCompare distnaceComp =new DistanceCompare();
-        Comparator<ConcretePiece> disComp =distnaceComp.thenComparing(idComp).thenComparing(winnComp);
-        pieces
-                .sort(disComp);
-        for(ConcretePiece piece: this.pieces
-        ){
-            if(piece.getDistance()!=0) {
-                String result =""+ piece.getId()+": " + piece.getDistance() +" squares";
-                System.out.println(result);
-            }
-        }
-    }
-
-    public void printKills(){
-        IdComp idComp = new IdComp();
-        //adding all the piecies to one array;
-        Comparator<Pawn> nmk =new KillsCompare().thenComparing(idComp).thenComparing(winnComp);
-        pawns.sort(nmk);
-        for (Pawn pawn : pawns) {
-            if(pawn.getKills()>0){System.out.println( pawn.getId() + ": " + pawn.getKills() + " kills");
-            }
-
-        }
-    }
-    public void printPieceCount(){
-        ArrayList<Position> positionArray= new ArrayList<Position>();
-        for (int i=0;i<boardSize;i++){
-            for(int j=0; j<boardSize;j++){
-                positionArray.add(new Position(i,j));
-            }
-        }
-        XComp xComp = new XComp();
-        YComp yComp = new YComp();
-        Comparator<Position> positionFinishComp=pieceCountComp.thenComparing(xComp).thenComparing(yComp);
-        positionArray.sort(positionFinishComp);
-        for (Position pos:positionArray){
-            if(amountPieceAtPosition[pos.getX()][pos.getY()]>1){
-                System.out.println(pos.toString() +""+amountPieceAtPosition[pos.getX()][pos.getY()]+" pieces");
-            }
-        }
-
-
-
-    }
+  
 //    A function that uses the variable kingpos that always updates the position of the king
 //    and checks whether the king is surrounded by players of the other team
     public boolean isKingSurrounded(int x, int y){
@@ -349,9 +276,90 @@ public class GameLogic implements  PlayableLogic{
     public void eatPiece(int x ,int y){
         board[x][y]=null;
     }
+     //A function that is called at the end of the game and sends to all functions that print
+    public void printAll(){
+        this.printHistorySteps();
+        this.printStarts();
+        this.printKills();
+        this.printStarts();
+        this.printDistance();
+        this.printStarts();
+        this.printPieceCount();
+        this.printStarts();
 
-    public void printStarts(){
+    }
+
+     public void printStarts(){
         System.out.println("***************************************************************************");
+    }
+
+    public void printHistorySteps(){
+        StepsAmountComp stepComp = new StepsAmountComp();
+        Comparator<ConcretePiece> historyComp = winnComp.thenComparing(stepComp);
+        pieces
+                .sort(historyComp);
+        for(ConcretePiece piece: this.pieces
+        ){
+            if(piece.getPositions().size()>1) {
+                String result = "" + piece.getId() + ": [";
+                for (int i = 0; i < piece.getPositions().size(); i++) {
+                    Position pos = piece.getPositions().get(i);
+                    result += pos.toString();
+                    if (i < piece.getPositions().size() - 1) {
+                        result += ", ";
+                    }
+                }
+                result += "]";
+                System.out.println(result);
+            }
+        }
+    }
+
+    public void printDistance(){
+        IdComp idComp = new IdComp();
+        DistanceCompare distnaceComp =new DistanceCompare();
+        Comparator<ConcretePiece> disComp =distnaceComp.thenComparing(idComp).thenComparing(winnComp);
+        pieces
+                .sort(disComp);
+        for(ConcretePiece piece: this.pieces
+        ){
+            if(piece.getDistance()!=0) {
+                String result =""+ piece.getId()+": " + piece.getDistance() +" squares";
+                System.out.println(result);
+            }
+        }
+    }
+
+    public void printKills(){
+        IdComp idComp = new IdComp();
+        //adding all the piecies to one array;
+        Comparator<Pawn> nmk =new KillsCompare().thenComparing(idComp).thenComparing(winnComp);
+        pawns.sort(nmk);
+        for (Pawn pawn : pawns) {
+            if(pawn.getKills()>0){System.out.println( pawn.getId() + ": " + pawn.getKills() + " kills");
+            }
+
+        }
+    }
+    public void printPieceCount(){
+        ArrayList<Position> positionArray= new ArrayList<Position>();
+        for (int i=0;i<boardSize;i++){
+            for(int j=0; j<boardSize;j++){
+                positionArray.add(new Position(i,j));
+            }
+        }
+        XComp xComp = new XComp();
+        YComp yComp = new YComp();
+        Comparator<Position> positionFinishComp=pieceCountComp.thenComparing(xComp).thenComparing(yComp);
+        positionArray.sort(positionFinishComp);
+        for (Position pos:positionArray){
+            if(amountPieceAtPosition[pos.getX()][pos.getY()]>1){
+                System.out.println(pos.toString() +""+amountPieceAtPosition[pos.getX()][pos.getY()]+" pieces");
+            }
+        }
+
+
+
     }
 
 
